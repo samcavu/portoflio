@@ -1,0 +1,29 @@
+body {
+  margin: 0;
+  font-family: 'Inter', 'Open Sans', Arial, sans-serif;
+  background: #232323;
+  color: #232323;
+}
+
+.app-layout {
+  display: flex;
+  min-height: 100vh;
+}
+
+:root {
+  --primary-dark: #232323;
+  --primary-light: #f7f7f5;
+  --gold: #ffd700;
+  --text-light: #fff8e1;
+  --text-dark: #232323;
+}
+
+/* Scrollbar styling for aesthetics */
+::-webkit-scrollbar {
+  width: 8px;
+  background: var(--primary-light);
+}
+::-webkit-scrollbar-thumb {
+  background: var(--gold);
+  border-radius: 4px;
+}
