@@ -1,1 +1,1 @@
-Sam's front-end engineer portfolio site
+Sam's front-end engineer portfolio site.
