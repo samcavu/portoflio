@@ -1,0 +1,443 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vanilla JavaScript Reactivity Demo</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 20px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.2);
+        }
+
+        .subtitle {
+            color: rgba(255, 255, 255, 0.9);
+            text-align: center;
+            margin-bottom: 40px;
+            font-size: 1.1rem;
+        }
+
+        .demo-section {
+            background: white;
+            border-radius: 12px;
+            padding: 30px;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .demo-section h2 {
+            color: #667eea;
+            margin-bottom: 20px;
+            font-size: 1.5rem;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .demo-section p {
+            color: #666;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .demo-content {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 20px;
+            margin-top: 15px;
+        }
+
+        .input-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 600;
+        }
+
+        input[type="text"],
+        input[type="number"] {
+            width: 100%;
+            padding: 12px;
+            border: 2px solid #e1e8ed;
+            border-radius: 6px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+        input[type="text"]:focus,
+        input[type="number"]:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .output {
+            background: white;
+            padding: 15px;
+            border-radius: 6px;
+            border-left: 4px solid #667eea;
+            margin-top: 15px;
+        }
+
+        .output-label {
+            color: #667eea;
+            font-weight: 600;
+            margin-bottom: 5px;
+            font-size: 14px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .output-value {
+            color: #333;
+            font-size: 18px;
+            font-weight: 500;
+        }
+
+        .grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        code {
+            background: #2d3748;
+            color: #68d391;
+            padding: 2px 6px;
+            border-radius: 3px;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+
+        .highlight {
+            background: #fff5f5;
+            border-left: 4px solid #fc8181;
+            padding: 15px;
+            margin: 15px 0;
+            border-radius: 4px;
+        }
+
+        @media (max-width: 768px) {
+            h1 {
+                font-size: 2rem;
+            }
+
+            .demo-section {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🎯 Vanilla JavaScript Reactivity</h1>
+        <p class="subtitle">Building reactive HTML pages without frameworks</p>
+
+        <!-- Demo 1: Simple Reactive Value -->
+        <div class="demo-section">
+            <h2>Demo 1: Simple Reactive Value</h2>
+            <p>Type in the input field and watch the value update reactively in multiple places:</p>
+            
+            <div class="demo-content">
+                <div class="input-group">
+                    <label for="name-input">Enter your name:</label>
+                    <input type="text" id="name-input" placeholder="Type your name...">
+                </div>
+
+                <div class="output">
+                    <div class="output-label">Reactive Output 1:</div>
+                    <div class="output-value" id="name-output-1">Waiting for input...</div>
+                </div>
+
+                <div class="output">
+                    <div class="output-label">Reactive Output 2:</div>
+                    <div class="output-value" id="name-output-2">Waiting for input...</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo 2: Reactive Expression (Sum) -->
+        <div class="demo-section">
+            <h2>Demo 2: Reactive Expression - Addition</h2>
+            <p>Change either number and see the sum update automatically using <code>reactiveExpression</code>:</p>
+            
+            <div class="demo-content">
+                <div class="grid">
+                    <div class="input-group">
+                        <label for="num1-input">First Number:</label>
+                        <input type="number" id="num1-input" value="5">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="num2-input">Second Number:</label>
+                        <input type="number" id="num2-input" value="10">
+                    </div>
+                </div>
+
+                <div class="output">
+                    <div class="output-label">Sum (a + b):</div>
+                    <div class="output-value" id="sum-output">15</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo 3: Multiple Reactive Expressions -->
+        <div class="demo-section">
+            <h2>Demo 3: Complex Reactive Expressions</h2>
+            <p>Multiple reactive expressions working together - demonstrating reactive calculations:</p>
+            
+            <div class="demo-content">
+                <div class="grid">
+                    <div class="input-group">
+                        <label for="price-input">Price ($):</label>
+                        <input type="number" id="price-input" value="100" step="0.01">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="quantity-input">Quantity:</label>
+                        <input type="number" id="quantity-input" value="3">
+                    </div>
+
+                    <div class="input-group">
+                        <label for="tax-input">Tax Rate (%):</label>
+                        <input type="number" id="tax-input" value="10" step="0.1">
+                    </div>
+                </div>
+
+                <div class="output">
+                    <div class="output-label">Subtotal (price × quantity):</div>
+                    <div class="output-value" id="subtotal-output">$300.00</div>
+                </div>
+
+                <div class="output">
+                    <div class="output-label">Tax Amount:</div>
+                    <div class="output-value" id="tax-amount-output">$30.00</div>
+                </div>
+
+                <div class="output">
+                    <div class="output-label">Total (with tax):</div>
+                    <div class="output-value" id="total-output">$330.00</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Demo 4: Text Transformation -->
+        <div class="demo-section">
+            <h2>Demo 4: Reactive Text Transformations</h2>
+            <p>Watch text transform reactively in different ways:</p>
+            
+            <div class="demo-content">
+                <div class="input-group">
+                    <label for="text-input">Enter some text:</label>
+                    <input type="text" id="text-input" placeholder="Type something..." value="Hello World">
+                </div>
+
+                <div class="output">
+                    <div class="output-label">Uppercase:</div>
+                    <div class="output-value" id="uppercase-output">HELLO WORLD</div>
+                </div>
+
+                <div class="output">
+                    <div class="output-label">Lowercase:</div>
+                    <div class="output-value" id="lowercase-output">hello world</div>
+                </div>
+
+                <div class="output">
+                    <div class="output-label">Character Count:</div>
+                    <div class="output-value" id="char-count-output">11</div>
+                </div>
+
+                <div class="output">
+                    <div class="output-label">Reversed:</div>
+                    <div class="output-value" id="reversed-output">dlroW olleH</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Step 1: Creating Reactive Values
+        function reactiveValue(initialValue) {
+            let value = initialValue;
+            const subscribers = [];
+
+            function get() {
+                return value;
+            }
+
+            function set(newValue) {
+                if (value !== newValue) {
+                    value = newValue;
+                    subscribers.forEach((subscriber) => subscriber());
+                }
+            }
+
+            function subscribe(subscriber) {
+                subscribers.push(subscriber);
+            }
+
+            return { get, set, subscribe };
+        }
+
+        // Step 3: Creating Reactive Expressions
+        function reactiveExpression(fn, ...dependencies) {
+            const result = reactiveValue(fn(...dependencies.map((dep) => dep.get())));
+
+            dependencies.forEach((dependency) => {
+                dependency.subscribe(() => {
+                    result.set(fn(...dependencies.map((dep) => dep.get())));
+                });
+            });
+
+            return result;
+        }
+
+        // Demo 1: Simple Reactive Value
+        const nameValue = reactiveValue('');
+        const nameInput = document.getElementById('name-input');
+        const nameOutput1 = document.getElementById('name-output-1');
+        const nameOutput2 = document.getElementById('name-output-2');
+
+        nameInput.addEventListener('input', (e) => {
+            nameValue.set(e.target.value);
+        });
+
+        nameValue.subscribe(() => {
+            const val = nameValue.get();
+            nameOutput1.textContent = val || 'Waiting for input...';
+        });
+
+        nameValue.subscribe(() => {
+            const val = nameValue.get();
+            nameOutput2.textContent = val ? `Hello, ${val}!` : 'Waiting for input...';
+        });
+
+        // Demo 2: Reactive Expression - Sum
+        const num1 = reactiveValue(5);
+        const num2 = reactiveValue(10);
+        const sum = reactiveExpression((a, b) => a + b, num1, num2);
+
+        const num1Input = document.getElementById('num1-input');
+        const num2Input = document.getElementById('num2-input');
+        const sumOutput = document.getElementById('sum-output');
+
+        num1Input.addEventListener('input', (e) => {
+            num1.set(parseFloat(e.target.value) || 0);
+        });
+
+        num2Input.addEventListener('input', (e) => {
+            num2.set(parseFloat(e.target.value) || 0);
+        });
+
+        sum.subscribe(() => {
+            sumOutput.textContent = sum.get();
+        });
+
+        // Demo 3: Complex Reactive Expressions
+        const price = reactiveValue(100);
+        const quantity = reactiveValue(3);
+        const taxRate = reactiveValue(10);
+
+        const subtotal = reactiveExpression((p, q) => p * q, price, quantity);
+        const taxAmount = reactiveExpression((st, tr) => st * (tr / 100), subtotal, taxRate);
+        const total = reactiveExpression((st, ta) => st + ta, subtotal, taxAmount);
+
+        const priceInput = document.getElementById('price-input');
+        const quantityInput = document.getElementById('quantity-input');
+        const taxInput = document.getElementById('tax-input');
+        const subtotalOutput = document.getElementById('subtotal-output');
+        const taxAmountOutput = document.getElementById('tax-amount-output');
+        const totalOutput = document.getElementById('total-output');
+
+        priceInput.addEventListener('input', (e) => {
+            price.set(parseFloat(e.target.value) || 0);
+        });
+
+        quantityInput.addEventListener('input', (e) => {
+            quantity.set(parseFloat(e.target.value) || 0);
+        });
+
+        taxInput.addEventListener('input', (e) => {
+            taxRate.set(parseFloat(e.target.value) || 0);
+        });
+
+        subtotal.subscribe(() => {
+            subtotalOutput.textContent = `$${subtotal.get().toFixed(2)}`;
+        });
+
+        taxAmount.subscribe(() => {
+            taxAmountOutput.textContent = `$${taxAmount.get().toFixed(2)}`;
+        });
+
+        total.subscribe(() => {
+            totalOutput.textContent = `$${total.get().toFixed(2)}`;
+        });
+
+        // Demo 4: Text Transformations
+        const textValue = reactiveValue('Hello World');
+        const uppercaseText = reactiveExpression((text) => text.toUpperCase(), textValue);
+        const lowercaseText = reactiveExpression((text) => text.toLowerCase(), textValue);
+        const charCount = reactiveExpression((text) => text.length, textValue);
+        const reversedText = reactiveExpression((text) => text.split('').reverse().join(''), textValue);
+
+        const textInput = document.getElementById('text-input');
+        const uppercaseOutput = document.getElementById('uppercase-output');
+        const lowercaseOutput = document.getElementById('lowercase-output');
+        const charCountOutput = document.getElementById('char-count-output');
+        const reversedOutput = document.getElementById('reversed-output');
+
+        textInput.addEventListener('input', (e) => {
+            textValue.set(e.target.value);
+        });
+
+        uppercaseText.subscribe(() => {
+            uppercaseOutput.textContent = uppercaseText.get();
+        });
+
+        lowercaseText.subscribe(() => {
+            lowercaseOutput.textContent = lowercaseText.get();
+        });
+
+        charCount.subscribe(() => {
+            charCountOutput.textContent = charCount.get();
+        });
+
+        reversedText.subscribe(() => {
+            reversedOutput.textContent = reversedText.get();
+        });
+
+        // Initialize all displays
+        nameValue.set('');
+        num1.set(5);
+        num2.set(10);
+        price.set(100);
+        quantity.set(3);
+        taxRate.set(10);
+        textValue.set('Hello World');
+    </script>
+</body>
+</html>
